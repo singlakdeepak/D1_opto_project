@@ -5,12 +5,17 @@
 % Last updated on: 08/06/2025
 %% Get correct walking bout startFrames and endFrames from encoder
 
-
+ 
 %% Load concatenatedData
 
 % Select the folder with the concatenatedData
-folderPath = uigetdir('/media/deeplabcutpc/Expansion/', 'Select the folder containing concatenatedData .mat files');
-
+if osid ==1
+    folderPath = uigetdir('D:\Phase 2_Training\',...
+            'Select the folder containing concatenatedData .mat files');
+elseif (osid ==2)
+    folderPath = uigetdir('/media/deeplabcutpc/Expansion/',...
+            'Select the folder containing concatenatedData .mat files');
+end
 % Check if the user canceled the folder selection
 if folderPath == 0
     disp('User canceled the folder selection.');

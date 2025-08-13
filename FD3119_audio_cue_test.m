@@ -1,12 +1,23 @@
-%start by clearing workspace.
-
-%first need to load a mouse2D file into workspace.
-
-%also, if ephys is available, then load the eMouse file as well.
+% Make sure the VLSE Neuro functions are in workspace. 
 clear all;
 clc;
-addpath(genpath('../'));
 
+
+if ispc
+    disp('Running on Windows');
+    osid = 1;
+elseif isunix
+    disp('Running on Linux/Unix (e.g., Ubuntu)');
+    osid = 2;
+elseif ismac
+    disp('Running on macOS');
+    osid = 2;
+end
+if (osid ==1)
+    addpath(genpath('..\'));
+elseif (osid == 2)
+    addpath(genpath('../'));
+end
 %% Parameters
 % --- recording params ---
 samplingFrequency = 25000; % Sampling frequency in Hz
