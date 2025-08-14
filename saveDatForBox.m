@@ -14,7 +14,7 @@ elseif ismac
     osid = 2;
 end
 if (osid ==1)
-    addpath(genpath('..\Code\VLSE neuro'));
+    addpath(genpath('..\Code\VLSE neuro\'));
 elseif (osid == 2)
     addpath(genpath('../'));
 end
