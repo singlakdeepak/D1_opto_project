@@ -74,7 +74,7 @@ if exist('laser', 'var')
 
     % Find the indices where the laser turns on (i.e., where the difference is 1)
     laser_onset = find(laser_diff == 1);
-    laser_onset_times = (laser_onset - 1)/samplingFrequency;
+    laser_onset_times = (laser_onset)/samplingFrequency;
     laser_onset_diffs = diff([0,laser_onset_times]);
     new_laser_trial_idx = find(laser_onset_diffs>1);
     
