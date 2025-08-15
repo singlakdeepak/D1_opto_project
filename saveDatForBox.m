@@ -2,22 +2,8 @@
 clear all;
 clc;
 
-
-if ispc
-    disp('Running on Windows');
-    osid = 1;
-elseif isunix
-    disp('Running on Linux/Unix (e.g., Ubuntu)');
-    osid = 2;
-elseif ismac
-    disp('Running on macOS');
-    osid = 2;
-end
-if (osid ==1)
-    addpath(genpath('..\Code\VLSE neuro\'));
-elseif (osid == 2)
-    addpath(genpath('../'));
-end
+% have this function at the start of every script that runs analysis.
+setOSDetails;
 %% Parameters
 % --- recording params ---
 samplingFrequency = 25000; % Sampling frequency in Hz
