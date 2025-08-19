@@ -1,5 +1,5 @@
 function plotAngVel_byCue(angVel, trial_arrays,...
-                trialTypes, fs, window)
+                trialTypes, fs, window, doBaseline)
 % Plot angular velocity aligned to stim onset for different trial types
 %
 % Inputs:
@@ -8,6 +8,8 @@ function plotAngVel_byCue(angVel, trial_arrays,...
 %   stim onset time
 %   fs - sampling rate in Hz
 %   window - [pre post] window in seconds
+%   doBaseline - true or false boolean to apply baseline subtraction based
+%   on preSamps (typically -1s to 0s is baseline)
 
     preSamps = round(window(1) * fs);
     postSamps = round(window(2) * fs);
@@ -35,6 +37,16 @@ function plotAngVel_byCue(angVel, trial_arrays,...
            
             if trialidx - preSamps >= 1 && trialidx + postSamps <= length(angVel)
                 segment = angVel(trialidx - preSamps : trialidx + postSamps);
+
+                % --- Baseline subtraction: mean from -1s to 0s ---
+                if doBaseline
+                    baseline_start = trialidx - preSamps;
+                    baseline_end   = trialidx;
+                    baseline = mean(angVel(baseline_start:baseline_end));
+                    segment = segment - baseline;
+                end
+                % -------------------------------------------------
+
                 traces(end+1, :) = segment;
             end
         end
@@ -51,7 +63,11 @@ function plotAngVel_byCue(angVel, trial_arrays,...
             plot(t, meanTrace, 'Color', colors(i,:), 'LineWidth', 1);
         end
         xlabel(['time to ', trialType, ' onset (s)']);
-        ylabel('angular velocity');
+        if doBaseline
+            ylabel('change in angular velocity');
+        else
+            ylabel('angular velocity');
+        end
         % if ~strcmp(plotID,'all')
         %     a1 = keys{1};
         %     title(['Stim Frequency (Hz), Duration (s): ',a1]);

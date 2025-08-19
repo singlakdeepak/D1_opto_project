@@ -59,7 +59,6 @@ local_encoder_fx;
 
 %% Get laser on and off times based on the set parameters
 
-
 if exist('laser', 'var')
     laser_diff = diff([0,laser]);
 

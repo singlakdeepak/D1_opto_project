@@ -80,9 +80,19 @@ trialTypes = {'CS+','CS-','CS+ probe'};
 trial_arrays = [CSp,CSn, CS_probe];
 precue = 1;
 postcue = 5;
+doBaseline = 1; % decide whether to apply baseline subtraction
 plotAngVel_byCue(smooth_resamp_vels, trial_arrays,...
-                trialTypes, finalFPS, [precue,postcue]);
+                trialTypes, finalFPS, [precue,postcue], doBaseline);
 
 %% plot the startle response adaptation in first one second after cue. 
 plotAngVel_byCueOverT(smooth_resamp_vels, trial_arrays,...
                 trialTypes, finalFPS, cue_to_laser_time,5);
+
+%% check 0.5s to 1.5s vel activity to see if there's any dip
+bin_size = 2; % averaging every # of trials
+startidx = 0.5; % starting time of interest
+endidx = 1; % ending time of interest
+plotTempActivity(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, ...
+                 bin_size, [startidx, endidx])
+
+
