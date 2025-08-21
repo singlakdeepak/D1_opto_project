@@ -38,6 +38,7 @@ function plotTempActivity(angVel, trial_arrays, trialTypes, fs, bin_size, window
         SetFigBoxDefaults;
         ylabel('angular vel')
         ylim([0 0.5])
+        disp(['mean of ', trialType,  ' = ', num2str(meanVel)])
     end
     hold off;
 

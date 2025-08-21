@@ -7,7 +7,7 @@
 % Parameters
 numCSplus  = 100;  % Number of CS+ trials (1)
 numCSminus = 100;  % Number of CS- trials (0)
-probeEvery = 20;  % Insert a probe (2) after every N CS+ or CS- trials
+probeEvery = 13;  % Insert a probe (2) after every N CS+ or CS- trials
 maxConsec  = 3;   % Maximum allowed identical consecutive trials
 
 %% Step 1: Create initial pool of CS+ and CS- trials
