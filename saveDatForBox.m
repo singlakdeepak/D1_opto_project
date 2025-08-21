@@ -30,7 +30,7 @@ get_startendFrames = 1; % Change to 1 only if you would like to get start and en
 laser_pulse_dur = 0.01; % 10 ms in duration
 eps2 = 0.01;
 laser_trial_freq = [25,40];
-laser_trial_dur = [1];
+laser_trial_dur = [2]; % Make sure to change this if laser duration changes
 
 cue_to_laser_time = 1;
 lPower  = 6; % laser power

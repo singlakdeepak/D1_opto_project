@@ -1,38 +1,64 @@
-%% Creates .txt file with each row designated to a single 0, 1, or 2 %%
-% includes randomizing x number of CS+ (1) trials and y number CS- (0) trials
-% adds probe trials (2) after every 10 CS+ and CS- trials
-% makes sure no more than 3 consecutive same trials
-
 %% Trial Sequence Generator
 % Parameters
-numCSplus  = 100;  % Number of CS+ trials (1)
+numCSplus  = 90;   % Number of CS+ trials (1)
 numCSminus = 100;  % Number of CS- trials (0)
-probeEvery = 13;  % Insert a probe (2) after every N CS+ or CS- trials
-maxConsec  = 3;   % Maximum allowed identical consecutive trials
+numProbe   = 10;   % Number of Probe trials (2)
+maxConsec  = 3;    % Maximum allowed identical consecutive trials
 
 %% Step 1: Create initial pool of CS+ and CS- trials
 trials = [ones(1, numCSplus), zeros(1, numCSminus)];
 
-%% Step 2: Shuffle and check constraints
+%% Step 2: Shuffle and check constraints for CS+/CS- only
 isValid = false;
 while ~isValid
     shuffled = trials(randperm(length(trials)));
     isValid = allConsecOK(shuffled, maxConsec);
 end
 
-%% Step 3: Insert probe trials after every 'probeEvery' CS+/CS- trials
-finalSeq = [];
-counter = 0;
-for t = shuffled
-    finalSeq(end+1) = t;
-    counter = counter + 1;
-    if counter == probeEvery
-        finalSeq(end+1) = 2;
-        counter = 0;
+%% Step 3: Insert probes evenly throughout the sequence
+totalTrials = numCSplus + numCSminus + numProbe;
+interval = floor((numCSplus + numCSminus) / numProbe);  % spacing within original sequence
+
+finalSeq = shuffled;
+probePositions = round(linspace(interval, length(shuffled), numProbe));
+
+% Make sure probe positions don’t exceed the current length
+probePositions(probePositions > length(finalSeq)) = length(finalSeq);
+
+% Insert starting from the back so indices stay valid
+for p = numel(probePositions):-1:1
+    pos = probePositions(p);
+    % If pos is at the very end, just append
+    if pos > length(finalSeq)
+        finalSeq = [finalSeq, 2];
+    else
+        finalSeq = [finalSeq(1:pos), 2, finalSeq(pos+1:end)];
     end
 end
 
-%% Step 4: Ask user where to save
+%% Step 4: Re-check constraint with probes (reshuffle if invalid)
+isValid = allConsecOK(finalSeq, maxConsec);
+attempts = 0;
+while ~isValid && attempts < 100
+    shuffled = trials(randperm(length(trials)));
+    finalSeq = shuffled;
+    for p = numel(probePositions):-1:1
+        pos = probePositions(p);
+        if pos > length(finalSeq)
+            finalSeq = [finalSeq, 2];
+        else
+            finalSeq = [finalSeq(1:pos), 2, finalSeq(pos+1:end)];
+        end
+    end
+    isValid = allConsecOK(finalSeq, maxConsec);
+    attempts = attempts + 1;
+end
+
+if ~isValid
+    warning('Could not satisfy max consecutive trial rule with probes after 100 attempts.');
+end
+
+%% Step 5: Ask user where to save
 [filename, pathname] = uiputfile('*.txt', 'Save Trial Sequence As');
 if isequal(filename,0) || isequal(pathname,0)
     disp('User canceled save.');

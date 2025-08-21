@@ -52,7 +52,7 @@ local_encoder_fx;
 laser_pulse_dur = 0.01; % 10 ms in duration
 eps2 = 0.01;
 laser_trial_freq = [25,40];
-laser_trial_dur = [1];
+laser_trial_dur = [2];
 
 if exist('laser', 'var')
     laser_diff = diff([0,laser]);
