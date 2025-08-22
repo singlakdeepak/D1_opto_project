@@ -64,9 +64,9 @@ function plotAngVel_byCue(angVel, trial_arrays,...
         end
         xlabel(['time to ', trialType, ' onset (s)']);
         if doBaseline
-            ylabel('change in angular velocity');
+            ylabel('change in angular velocity (rev/s)');
         else
-            ylabel('angular velocity');
+            ylabel('angular velocity (rev/s)');
         end
         % if ~strcmp(plotID,'all')
         %     a1 = keys{1};

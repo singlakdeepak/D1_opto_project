@@ -4,8 +4,6 @@
 % stop of walking bouts. 
 % Last updated on: 08/06/2025
 %% Get correct walking bout startFrames and endFrames from encoder
-
- 
 %% Load concatenatedData
 
 % Select the folder with the concatenatedData

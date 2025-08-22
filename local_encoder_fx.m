@@ -233,8 +233,28 @@ end
 % Replace old startFrames with adjusted ones
 startFrames = new_startFrames';
 
-% --- 6. fine-tun adjustment of endFrames ---
+% --- 6. final rejection of bouts with smoothed velocity below threshold of 0.1 ---
 
+valid_startFrames = [];
+valid_endFrames = [];
+
+for i = 1:length(startFrames)
+    % Extract velocity segment for this bout
+    bout_vels = smooth_resamp_vels(startFrames(i):endFrames(i));
+
+    % Compute mean velocity (absolute to avoid direction canceling)
+    mean_bout_vel = mean(abs(bout_vels));
+
+    % Only keep bouts above threshold
+    if mean_bout_vel >= final_vel_threshold
+        valid_startFrames(end+1,1) = startFrames(i);
+        valid_endFrames(end+1,1)   = endFrames(i);
+    end
+end
+
+% Replace old start/endFrames with filtered ones
+startFrames = valid_startFrames;
+endFrames   = valid_endFrames;
 %% Calculate number of bouts per minute
 
 % Initialize the minute-by-minute bout count array
@@ -344,7 +364,7 @@ end
 
 % --- debug params ---
 debug = false; % set to true to debug with plots
-bouts = 1;
+bouts = 1:14;
 onset2 = 10;
 
 % --- debug plots of smooth_resamp_vels, accl, and accl_round ---
