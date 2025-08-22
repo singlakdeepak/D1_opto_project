@@ -1,5 +1,6 @@
 % Make sure the VLSE Neuro functions are in workspace. 
 clear all;
+close all;
 clc;
 
 setOSDetails;
