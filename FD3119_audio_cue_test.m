@@ -87,14 +87,19 @@ plotAngVel_byCue(smooth_resamp_vels, trial_arrays,...
                 trialTypes, finalFPS, [precue,postcue], doBaseline);
 
 %% plot the startle response adaptation in first one second after cue. 
+do2 = 0;
+if do2
 plotAngVel_byCueOverT(smooth_resamp_vels, trial_arrays,...
                 trialTypes, finalFPS, cue_to_laser_time,5);
+end
 
 %% check 0.5s to 1.5s vel activity to see if there's any dip
-bin_size = 5; % averaging every # of trials
-startidx = 1; % starting time of interest
-endidx = 4; % ending time of interest
-plotTempActivity(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, ...
-                 bin_size, [startidx, endidx])
-
+do3 = 0;
+if do3
+    bin_size = 5; % averaging every # of trials
+    startidx = 1; % starting time of interest
+    endidx = 4; % ending time of interest
+    plotTempActivity(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, ...
+                     bin_size, [startidx, endidx])
+end
 

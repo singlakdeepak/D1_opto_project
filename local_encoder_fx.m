@@ -89,6 +89,7 @@ resamp_ang_vels =  ang_vels*finalFPS/360; % degrees to revolutions/second
 mov_window_dur = 200; % 200 ms current sweet spot
 mov_window_samps = mov_window_dur*finalFPS*0.001;
 smooth_resamp_vels = smooth(resamp_ang_vels, mov_window_samps,'sgolay');
+
 newTime = 0:1/finalFPS:(60*totalTime);
 
 %% Identifying startFrames and endFrames based on abs(acceleration)

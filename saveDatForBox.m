@@ -13,6 +13,7 @@ finalFPS = 80;
 walk_bout_min_dur = 2.5;     % Minimum walking bout duration in seconds: good value can be anything above 1.5
 downTime = 1.5;              % Duration between walking bouts in seconds: good value is at 1.5
 accl_threshold = 0.21;       % Manipulatable threshold amplitude for acceleration thresholding: good value is at 0.21
+final_vel_threshold = 0.05;   % reject final bouts with mean smooth_resamp_vels threshold
 
 decimal_round = 2;           % decimals to round to for accl_rounding
 

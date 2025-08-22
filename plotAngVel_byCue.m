@@ -50,7 +50,7 @@ function plotAngVel_byCue(angVel, trial_arrays,...
                 traces(end+1, :) = segment;
             end
         end
-
+        
         % Plot mean ± SEM
         if ~isempty(traces)
             meanTrace = mean(traces, 1);
