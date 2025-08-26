@@ -56,26 +56,22 @@ if (chinfo_present == 0)
     channelA = allConcatenatedData(1,:);
     if size(allConcatenatedData,1)>=3 && (any(allConcatenatedData(3,:) == 1))
         % Find indices of all pulses of 1 from Camera 1 and find indexes
-        if any(allConcatenatedData(3,:) == 1)
-            camera1_indices = find(allConcatenatedData(3,:) == 1);
-            first_pulse_index = camera1_indices(1);
-            last_pulse_index = camera1_indices(end);
-            camera = allConcatenatedData(3, first_pulse_index:last_pulse_index);
-        end
+        camera1_indices = find(allConcatenatedData(3,:) == 1);
+        first_pulse_index = camera1_indices(1);
+        last_pulse_index = camera1_indices(end);
+        camera = allConcatenatedData(3, first_pulse_index:last_pulse_index);
     
-        % Synchronize data and save only from the start of camera recording to the end of camera recording (first to the last pulse)
+        % Synchronize data and save only from the start of camera recording to the end of camera recording
         channelB = allConcatenatedData(2, first_pulse_index:last_pulse_index);
         channelA = allConcatenatedData(1, first_pulse_index:last_pulse_index);
-        cam_start_time = (first_pulse_index/samplingFrequency) - (1/finalFPS);  % start time of camera recording in seconds
+        cam_start_time = (first_pulse_index/samplingFrequency) - (1/finalFPS);  
         cam_end_time = last_pulse_index/samplingFrequency;
     
         % If laser exists
         if size(allConcatenatedData,1)>=4 && any(allConcatenatedData(4,:) == 1)
-            laser = allConcatenatedData(4,:);
-            % Find the differences between consecutive elements
+            laser = allConcatenatedData(4,:);  
+            laser = laser(first_pulse_index:last_pulse_index); % synchronize laser
             laser_diff = diff(laser);
-    
-            % Find the indices where the laser turns on (i.e., where the difference is 1)
             laser_onset = find(laser_diff == 1) + 1;
         end
     
@@ -88,22 +84,11 @@ if (chinfo_present == 0)
         if size(allConcatenatedData,1)>=6 && any(allConcatenatedData(6,:) == 1)
             cue2 = allConcatenatedData(6,:);
         end
-        
-    
     end
 else
     disp('Channel info is present in the data folder. Mapping Channels.');
-    possible_names = {'channelA',...
-                        'channelB',...
-                        'cameras_ball_pup',...
-                        'laser',...
-                        'audio_cue_cs+',...
-                        'cue1',...
-                        'cs+',...
-                        'audio_cue_cs-',...
-                        'cue2',...
-                        'cs-',...
-                        'VR_syn'};
+    possible_names = {'channelA', 'channelB', 'cameras_ball_pup', 'laser', ...
+                      'audio_cue_cs+', 'cue1', 'cs+', 'audio_cue_cs-', 'cue2', 'cs-', 'VR_syn'};
     custom_chnames = {channel_info.custom_channel_name};
     for cid = 1:length(custom_chnames)
         [isMatch, idx] = ismember(custom_chnames{cid}, possible_names);
@@ -125,30 +110,24 @@ else
                 VR_syn = allConcatenatedData(cid,:);
             end
         else
-            disp('This channel is not recorded: ',custom_chnames{cid},'.\n');
-            disp('Make changes in extract_encoder_movement.m');
+            disp(['This channel is not recorded: ', custom_chnames{cid}, '. Make changes in extract_encoder_movement.m']);
         end
     end
     
     if exist('camera1_indices','var')
-        % Find indices of all pulses of 1 from Camera 1 and find indexes
-        a1 = find(camera1_indices== 1);
-        first_pulse_index = a1(1);
-        last_pulse_index = a1(end);
+        first_pulse_index = find(camera1_indices==1, 1, 'first');
+        last_pulse_index = find(camera1_indices==1, 1, 'last');
         camera = camera1_indices(first_pulse_index:last_pulse_index);
     
-        % Synchronize data and save only from the start of camera recording to the end of camera recording (first to the last pulse)
+        % Synchronize data
         channelB = channelB(first_pulse_index:last_pulse_index);
         channelA = channelA(first_pulse_index:last_pulse_index);
-        cam_start_time = (first_pulse_index/samplingFrequency) - (1/finalFPS);  % start time of camera recording in seconds
+        cam_start_time = (first_pulse_index/samplingFrequency) - (1/finalFPS);  
         cam_end_time = last_pulse_index/samplingFrequency;
-    
-        % If laser exists
+
         if exist('laser','var')
-            
+            laser = laser(first_pulse_index:last_pulse_index); % synchronize laser
             laser_diff = diff(laser);
-    
-            % Find the indices where the laser turns on (i.e., where the difference is 1)
             laser_onset = find(laser_diff == 1) + 1;
         end
     end

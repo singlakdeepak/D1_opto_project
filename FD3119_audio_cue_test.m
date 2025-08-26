@@ -37,10 +37,9 @@ cue_to_laser_time = 1;
 % --- Was it a reversal (Cue2 has probes) ---
 reverse = false;
 %% Extract the encoder movement and get walking start and stop
-extract_encoder_movement;
+extract_encoder_movement; % Encoder and laser is synchronized to camera, only necessary for pose tracking
 
-%% get laser times only during camera on times
-laser = laser(first_pulse_index:last_pulse_index);
+%% save cue times
 if exist('cue1','var')
     cue1  = cue1(first_pulse_index:last_pulse_index);
     [a1,a2] = get_cue_onset(cue1, samplingFrequency);
@@ -77,7 +76,6 @@ if exist('laser', 'var')
 end
 
 %% --- assuming there are only 1 type of laser, I will segregate Cue1 laser or Cue2 laser from probe trials ---
-
 if reverse % If Cue 2 has probe
     [Cue2, Cue2_probe] = unpair_probe_trials(Cue2, laser_trial_times, ...
         cue_to_laser_time);
