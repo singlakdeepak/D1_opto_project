@@ -49,6 +49,7 @@ end
 
 %%
 local_encoder_fx;
+close all;
 
 %% Get laser on and off times based on the set parameters
 laser_pulse_dur = 0.01; % 10 ms in duration
@@ -71,35 +72,27 @@ if exist('laser', 'var')
     laser_trial_times = laser_onset(new_laser_trial_idx)/samplingFrequency;
 end
 
-%% assuming there are only 1 type of laser, I will segregate CSp trials paired with laser
+%% --- assuming there are only 1 type of laser, I will segregate CSp trials paired with laser ---
 % and the ones which are not. 
 cue_to_laser_time = 1;
 [CSp, CS_probe] = unpair_probe_trials(CSp, laser_trial_times, ...
                         cue_to_laser_time);
 
-%% plot all the trial types included
+%% --- plot all the trial types included ---
 trialTypes = {'CS+','CS-','CS+ probe'};
 trial_arrays = [CSp,CSn, CS_probe];
 precue = 1;
 postcue = 5;
-doBaseline = 0; % decide whether to apply baseline subtraction
-plotAngVel_byCue(smooth_resamp_vels, trial_arrays,...
-                trialTypes, finalFPS, [precue,postcue], doBaseline);
+doBaseline = 0;
+analysisWindow = [0.2 0.75]; % seconds after onset for probeStats
+probeStats = plotAngVel_final(smooth_resamp_vels, trial_arrays,...
+                trialTypes, finalFPS, [precue,postcue], ...
+                doBaseline, analysisWindow);
 
 %% plot the startle response adaptation in first one second after cue. 
 do2 = 0;
 if do2
 plotAngVel_byCueOverT(smooth_resamp_vels, trial_arrays,...
                 trialTypes, finalFPS, cue_to_laser_time,5);
-end
-
-%% check 0.5s to 1.5s vel activity to see if there's any dip
-do3 = 0;
-if do3
-    bin_size = 5; % averaging every # of trials
-    startidx = 1; % starting time of interest
-    endidx = 4; % ending time of interest
-    plotTempActivity(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, ...
-                     bin_size, [startidx, endidx])
 end
 
