@@ -2,8 +2,8 @@ function probeStats = plotAngVel_final(angVel, trial_arrays, trialTypes, fs, win
 % Plot angular velocity aligned to stim onset for different trial types
 % Overlays CS+, CS-, and CS+ probe on the same plot
 %
-% trialTypes = {'CS+','CS-','CS+ probe'};
-% trial_arrays = [CSp, CSn, CS_probe]  OR  {CSp, CSn, CS_probe}
+% trialTypes = {'Cue1','Cue2','Cue_probe};
+% trial_arrays = [Cue1, Cue2, Cue_probe]  OR  {Cue1, Cue2, Cue_probe}
 %
 % analysisWindow = [start end] in seconds (relative to onset)
 %   e.g. [0.2 0.75]
@@ -19,7 +19,7 @@ function probeStats = plotAngVel_final(angVel, trial_arrays, trialTypes, fs, win
 
     figure(1); clf; hold on;
 
-    % colors: CS+ (blue), CS- (red), probe (green)
+    % colors: Cue1 (blue), Cue2 (red), probe (green)
     colors = [0,0,1; ...
               1,0,0; ...
               0,1,0];
@@ -49,7 +49,7 @@ function probeStats = plotAngVel_final(angVel, trial_arrays, trialTypes, fs, win
     else
         ylabel('angular velocity (rev/s)');
     end
-    title('CS+ (blue), CS- (red), probe (green)');
+    title('cue1 (blue), cue2 (red), probe (green)');
     ylim([-0.1 0.15]);   % fixed y-limits for all
     SetFigBoxDefaults;
 

@@ -27,36 +27,36 @@ onset = 2; % time before and after onset
 plotting_speed = false; % Change boolean if plotting speed or velocity
 
 get_startendFrames = 1; % Change to 1 only if you would like to get start and end frames.
+
+% --- Laser params ---
+laser_pulse_dur = 0.01; % 10 ms in duration
+laser_trial_freq = [25,40];
+laser_trial_dur = [2];
 %% Extract the encoder movement and get walking start and stop
 extract_encoder_movement;
 
 %% get laser times only during camera on times
 laser = laser(first_pulse_index:last_pulse_index);
-if exist('CS_p','var')
-    CS_p  = CS_p(first_pulse_index:last_pulse_index);
-    [a1,a2] = get_cue_onset(CS_p, samplingFrequency);
-    CSp = struct();
-    CSp.onsetID = a1;
-    CSp.onsetTime = a2;
+if exist('cue1','var')
+    cue1  = cue1(first_pulse_index:last_pulse_index);
+    [a1,a2] = get_cue_onset(cue1, samplingFrequency);
+    CS1 = struct();
+    CS1.onsetID = a1;
+    CS1.onsetTime = a2;
 end
-if exist('CS_n','var')
-    CS_n  = CS_n(first_pulse_index:last_pulse_index);
-    [a1,a2] = get_cue_onset(CS_n, samplingFrequency);
-    CSn = struct();
-    CSn.onsetID = a1;
-    CSn.onsetTime = a2;
+if exist('cue2','var')
+    cue2  = cue2(first_pulse_index:last_pulse_index);
+    [a1,a2] = get_cue_onset(cue2, samplingFrequency);
+    CS2 = struct();
+    CS2.onsetID = a1;
+    CS2.onsetTime = a2;
 end
 
 %%
 local_encoder_fx;
 close all;
 
-%% Get laser on and off times based on the set parameters
-laser_pulse_dur = 0.01; % 10 ms in duration
-eps2 = 0.01;
-laser_trial_freq = [25,40];
-laser_trial_dur = [2];
-
+%% Get laser on and off times
 if exist('laser', 'var')
     laser_diff = diff([0,laser]);
 
@@ -72,15 +72,23 @@ if exist('laser', 'var')
     laser_trial_times = laser_onset(new_laser_trial_idx)/samplingFrequency;
 end
 
-%% --- assuming there are only 1 type of laser, I will segregate CSp trials paired with laser ---
+%% --- assuming there are only 1 type of laser, I will segregate CS1 trials paired with laser ---
 % and the ones which are not. 
 cue_to_laser_time = 1;
-[CSp, CS_probe] = unpair_probe_trials(CSp, laser_trial_times, ...
+[Cue1, Cue1_probe] = unpair_probe_trials(CS1, laser_trial_times, ...
+                        cue_to_laser_time);
+[Cue2, Cue2_probe] = unpair_probe_trials(CS2, laser_trial_times, ...
                         cue_to_laser_time);
 
 %% --- plot all the trial types included ---
-trialTypes = {'CS+','CS-','CS+ probe'};
-trial_arrays = [CSp,CSn, CS_probe];
+if exist('Cue1_probe','var') && ~isempty(Cue1_probe)
+    trialTypes  = {'Cue1','Cue2','Cue1_probe'};
+    trial_arrays = {Cue1, Cue2, Cue1_probe};
+elseif exist('Cue2_probe','var') && ~isempty(Cue2_probe)
+    trialTypes  = {'Cue1','Cue2','Cue2_probe'};
+    trial_arrays = {Cue1, Cue2, Cue2_probe};
+end
+
 precue = 1;
 postcue = 5;
 doBaseline = 0;

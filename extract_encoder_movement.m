@@ -3,7 +3,6 @@
 % This file gets the position data from encoder and finds the start and
 % stop of walking bouts. 
 % Last updated on: 08/06/2025
-%% Get correct walking bout startFrames and endFrames from encoder
 %% Load concatenatedData
 
 % Select the folder with the concatenatedData
@@ -82,12 +81,12 @@ if (chinfo_present == 0)
     
         % Check if CS+ exists.
         if size(allConcatenatedData,1)>=5 && any(allConcatenatedData(5,:) == 1)
-            CS_p = allConcatenatedData(5,:);
+            cue1 = allConcatenatedData(5,:);
         end
         
         % Check if CS- exists. 
         if size(allConcatenatedData,1)>=6 && any(allConcatenatedData(6,:) == 1)
-            CS_n = allConcatenatedData(6,:);
+            cue2 = allConcatenatedData(6,:);
         end
         
     
@@ -99,10 +98,12 @@ else
                         'cameras_ball_pup',...
                         'laser',...
                         'audio_cue_cs+',...
+                        'cue1',...
+                        'cs+',...
                         'audio_cue_cs-',...
-                            'cs+',...
-                            'cs-',...
-                            'VR_syn'};
+                        'cue2',...
+                        'cs-',...
+                        'VR_syn'};
     custom_chnames = {channel_info.custom_channel_name};
     for cid = 1:length(custom_chnames)
         [isMatch, idx] = ismember(custom_chnames{cid}, possible_names);
@@ -116,11 +117,11 @@ else
                 camera1_indices = allConcatenatedData(cid,:);
             case 4
                 laser = allConcatenatedData(cid,:);
-            case {5, 7}
-                CS_p = allConcatenatedData(cid,:);
-            case {6, 8}
-                CS_n = allConcatenatedData(cid,:);
-            case 9
+            case {5, 6, 7}
+                cue1 = allConcatenatedData(cid,:);
+            case {8, 9, 10}
+                cue2 = allConcatenatedData(cid,:);
+            case 11
                 VR_syn = allConcatenatedData(cid,:);
             end
         else
@@ -150,8 +151,5 @@ else
             % Find the indices where the laser turns on (i.e., where the difference is 1)
             laser_onset = find(laser_diff == 1) + 1;
         end
-        
-    
     end
-    
 end
