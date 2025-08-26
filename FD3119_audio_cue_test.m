@@ -32,6 +32,10 @@ get_startendFrames = 1; % Change to 1 only if you would like to get start and en
 laser_pulse_dur = 0.01; % 10 ms in duration
 laser_trial_freq = [25,40];
 laser_trial_dur = [2];
+cue_to_laser_time = 1;
+
+% --- Was it a reversal (Cue2 has probes) ---
+reverse = false;
 %% Extract the encoder movement and get walking start and stop
 extract_encoder_movement;
 
@@ -40,16 +44,16 @@ laser = laser(first_pulse_index:last_pulse_index);
 if exist('cue1','var')
     cue1  = cue1(first_pulse_index:last_pulse_index);
     [a1,a2] = get_cue_onset(cue1, samplingFrequency);
-    CS1 = struct();
-    CS1.onsetID = a1;
-    CS1.onsetTime = a2;
+    Cue1 = struct();
+    Cue1.onsetID = a1;
+    Cue1.onsetTime = a2;
 end
 if exist('cue2','var')
     cue2  = cue2(first_pulse_index:last_pulse_index);
     [a1,a2] = get_cue_onset(cue2, samplingFrequency);
-    CS2 = struct();
-    CS2.onsetID = a1;
-    CS2.onsetTime = a2;
+    Cue2 = struct();
+    Cue2.onsetID = a1;
+    Cue2.onsetTime = a2;
 end
 
 %%
@@ -72,21 +76,24 @@ if exist('laser', 'var')
     laser_trial_times = laser_onset(new_laser_trial_idx)/samplingFrequency;
 end
 
-%% --- assuming there are only 1 type of laser, I will segregate CS1 trials paired with laser ---
-% and the ones which are not. 
-cue_to_laser_time = 1;
-[Cue1, Cue1_probe] = unpair_probe_trials(CS1, laser_trial_times, ...
-                        cue_to_laser_time);
-[Cue2, Cue2_probe] = unpair_probe_trials(CS2, laser_trial_times, ...
-                        cue_to_laser_time);
+%% --- assuming there are only 1 type of laser, I will segregate Cue1 laser or Cue2 laser from probe trials ---
+
+if reverse % If Cue 2 has probe
+    [Cue2, Cue2_probe] = unpair_probe_trials(Cue2, laser_trial_times, ...
+        cue_to_laser_time);
+else % If Cue 1 has probe
+    [Cue1, Cue1_probe] = unpair_probe_trials(Cue1, laser_trial_times, ...
+        cue_to_laser_time);
+end
 
 %% --- plot all the trial types included ---
-if exist('Cue1_probe','var') && ~isempty(Cue1_probe)
-    trialTypes  = {'Cue1','Cue2','Cue1_probe'};
-    trial_arrays = {Cue1, Cue2, Cue1_probe};
-elseif exist('Cue2_probe','var') && ~isempty(Cue2_probe)
+
+if reverse
     trialTypes  = {'Cue1','Cue2','Cue2_probe'};
     trial_arrays = {Cue1, Cue2, Cue2_probe};
+else
+    trialTypes  = {'Cue1','Cue2','Cue1_probe'};
+    trial_arrays = {Cue1, Cue2, Cue1_probe};
 end
 
 precue = 1;
