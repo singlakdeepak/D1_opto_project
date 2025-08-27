@@ -43,9 +43,10 @@ function plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, fs, win
         figure;
         imagesc(timeAxis, 1:nTrials, trialMatrix);
         colormap(jet); colorbar;
-        xlabel('Time (s)');
-        ylabel('Trial');
-        title(sprintf('Angular velocity: %s', trialTypes{tt}));
+        xlabel('time (s)');
+        ylabel('trial');
+        title(sprintf('angular velocity: %s', trialTypes{tt}));
         xline(0,'w--','LineWidth',1.5);
+        SetFigBoxDefaults
     end
 end

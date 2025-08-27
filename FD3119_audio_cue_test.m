@@ -87,10 +87,10 @@ end
 %% --- plot all the trial types included ---
 
 if reverse
-    trialTypes  = {'Cue1','Cue2','Cue2_probe'};
+    trialTypes  = {'Cue 1','Cue 2','Cue 2 probe'};
     trial_arrays = {Cue1, Cue2, Cue2_probe};
 else
-    trialTypes  = {'Cue1','Cue2','Cue1_probe'};
+    trialTypes  = {'Cue 1','Cue 2','Cue 1 probe'};
     trial_arrays = {Cue1, Cue2, Cue1_probe};
 end
 
@@ -102,6 +102,12 @@ probeStats = plotAngVel_final(smooth_resamp_vels, trial_arrays,...
                 trialTypes, finalFPS, [precue,postcue], ...
                 doBaseline, analysisWindow);
 
+%% --- Plot trial by trial angular velocity of cue 1 and cue 2 using imagesc ---
+precue = 1;
+postcue = 5;
+
+plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precue, postcue]);
+
 %% --- plot the startle response adaptation in first one second after cue ---
 do2 = 0;
 if do2
@@ -109,9 +115,8 @@ plotAngVel_byCueOverT(smooth_resamp_vels, trial_arrays,...
                 trialTypes, finalFPS, cue_to_laser_time,5);
 end
 
-%% --- Plot trial by trial angular velocity of cue 1 and cue 2 using imagesc ---
-precue = 1;
-postcue = 5;
-
-plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precue, postcue]);
-
+%% --- Save figures: CHANGE NAME ---
+% saveas(figure(1), 'TD156_session6.png')
+% saveas(figure(2), 'TD156_session6_Cue1trials.png')
+% saveas(figure(3), 'TD156_session6_Cue2trials.png')
+% saveas(figure(4), 'TD156_session6_probetrials.png')
