@@ -4,7 +4,7 @@ close all;
 clc;
 
 setOSDetails;
-%% Parameters
+%% --- Parameters ---
 % --- recording params ---
 samplingFrequency = 25000; % Sampling frequency in Hz
 finalFPS = 80;
@@ -36,7 +36,7 @@ cue_to_laser_time = 1;
 
 % --- Was it a reversal (Cue2 has probes) ---
 reverse = false;
-%% Extract the encoder movement and get walking start and stop
+%% --- Extract the encoder movement and get walking start and stop ---
 extract_encoder_movement; % Encoder and laser is synchronized to camera, only necessary for pose tracking
 
 %% save cue times
@@ -55,11 +55,11 @@ if exist('cue2','var')
     Cue2.onsetTime = a2;
 end
 
-%%
+%% --- get walking bout start and end frames ---
 local_encoder_fx;
 close all;
 
-%% Get laser on and off times
+%% --- Get laser on and off times ---
 if exist('laser', 'var')
     laser_diff = diff([0,laser]);
 
@@ -102,10 +102,16 @@ probeStats = plotAngVel_final(smooth_resamp_vels, trial_arrays,...
                 trialTypes, finalFPS, [precue,postcue], ...
                 doBaseline, analysisWindow);
 
-%% plot the startle response adaptation in first one second after cue. 
+%% --- plot the startle response adaptation in first one second after cue ---
 do2 = 0;
 if do2
 plotAngVel_byCueOverT(smooth_resamp_vels, trial_arrays,...
                 trialTypes, finalFPS, cue_to_laser_time,5);
 end
+
+%% --- Plot trial by trial angular velocity of cue 1 and cue 2 using imagesc ---
+precue = 1;
+postcue = 5;
+
+plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precue, postcue]);
 
