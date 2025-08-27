@@ -108,14 +108,15 @@ postcue = 5;
 
 plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precue, postcue]);
 
-saveas(figure(1), )
-saveas(figure(2), 'TD154_session1_Cue1trials.png')
-saveas(figure(3), 'TD154_session1_Cue1trials.png')
-saveas(figure(4), 'TD154_session1_Cue1trials.png')
-
 %% --- plot the startle response adaptation in first one second after cue ---
 do2 = 0;
 if do2
 plotAngVel_byCueOverT(smooth_resamp_vels, trial_arrays,...
                 trialTypes, finalFPS, cue_to_laser_time,5);
 end
+
+%% --- Save figures: CHANGE NAME ---
+saveas(figure(1), 'TD155_session3.png')
+saveas(figure(2), 'TD155_session3_Cue1trials.png')
+saveas(figure(3), 'TD155_session3_Cue2trials.png')
+saveas(figure(4), 'TD155_session3_probetrials.png')

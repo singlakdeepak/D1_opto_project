@@ -42,7 +42,9 @@ function plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, fs, win
 
         figure;
         imagesc(timeAxis, 1:nTrials, trialMatrix);
-        colormap(jet); colorbar;
+        caxis([-0.3 0.5]);  % <-- impose color limits
+        colormap(jet); 
+        colorbar;
         xlabel('time (s)');
         ylabel('trial');
         title(sprintf('angular velocity: %s', trialTypes{tt}));
