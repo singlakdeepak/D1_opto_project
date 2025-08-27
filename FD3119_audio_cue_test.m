@@ -116,7 +116,7 @@ plotAngVel_byCueOverT(smooth_resamp_vels, trial_arrays,...
 end
 
 %% --- Save figures: CHANGE NAME ---
-% saveas(figure(1), 'TD156_session6.png')
-% saveas(figure(2), 'TD156_session6_Cue1trials.png')
-% saveas(figure(3), 'TD156_session6_Cue2trials.png')
-% saveas(figure(4), 'TD156_session6_probetrials.png')
+saveas(figure(1), 'TD154_session4.png')
+saveas(figure(2), 'TD154_session4_Cue1trials.png')
+saveas(figure(3), 'TD154_session4_Cue2trials.png')
+saveas(figure(4), 'TD154_session4_probetrials.png')
