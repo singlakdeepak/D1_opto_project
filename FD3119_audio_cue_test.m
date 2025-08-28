@@ -35,7 +35,7 @@ laser_trial_dur = [2];
 cue_to_laser_time = 1;
 
 % --- Was it a reversal (Cue2 has probes) ---
-reverse = false;
+reverse = true;
 %% --- Extract the encoder movement and get walking start and stop ---
 extract_encoder_movement; % Encoder and laser is synchronized to camera, only necessary for pose tracking
 
@@ -97,16 +97,21 @@ end
 precue = 1;
 postcue = 5;
 doBaseline = 0;
-analysisWindow = [0.2 0.75]; % seconds after onset for probeStats
+analysisWindow = [0 1]; % seconds after onset for probeStats
 probeStats = plotAngVel_final(smooth_resamp_vels, trial_arrays,...
                 trialTypes, finalFPS, [precue,postcue], ...
                 doBaseline, analysisWindow);
 
+disp(['meanVal = ', num2str(probeStats.meanVal)]);
+disp(['maxVal = ', num2str(probeStats.maxVal)]);
+disp(['minVal = ', num2str(probeStats.minVal)]);
+
 %% --- Plot trial by trial angular velocity of cue 1 and cue 2 using imagesc ---
 precue = 1;
 postcue = 5;
+doBaseline = 0; % Only really matters if mouse is runnning a lot before cue onset
 
-plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precue, postcue]);
+plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precue, postcue], doBaseline);
 
 %% --- plot the startle response adaptation in first one second after cue ---
 do2 = 0;
@@ -116,7 +121,17 @@ plotAngVel_byCueOverT(smooth_resamp_vels, trial_arrays,...
 end
 
 %% --- Save figures: CHANGE NAME ---
-saveas(figure(1), 'TD156_session6.png')
-saveas(figure(2), 'TD156_session6_Cue1trials.png')
-saveas(figure(3), 'TD156_session6_Cue2trials.png')
-saveas(figure(4), 'TD156_session6_probetrials.png')
+parts = strsplit(ch_info_file, filesep); % split into parts
+
+name = parts{4};
+session = parts{5};
+tokens = regexp(session, '^(\d+)_', 'tokens'); % extracts session number before underscore
+sessionNum = str2double(tokens{1}{1});
+
+doSave = 1;
+if doSave
+    saveas(figure(1), sprintf('%s_session%d.png', name, sessionNum))
+    saveas(figure(2), sprintf('%s_session%d_Cue1trials.png', name, sessionNum))
+    saveas(figure(3), sprintf('%s_session%d_Cue2trials.png', name, sessionNum))
+    saveas(figure(4), sprintf('%s_session%d_probetrials.png', name, sessionNum))
+end

@@ -1,4 +1,4 @@
-function plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, fs, window)
+function plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, fs, window, doBaseline)
 % plotTrialHeatmaps
 %   Plots trial-by-trial angular velocity aligned to cue onset.
 %
@@ -8,10 +8,11 @@ function plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, fs, win
 %   trialTypes         : labels for trial types (cell array of strings)
 %   fs                 : sampling rate (Hz)
 %   window             : [precue postcue] in seconds
+%   doBaseline         : logical, true = subtract baseline (pre-cue mean)
 %
 % Example:
 %   plotTrialHeatmaps(smooth_resamp_vels, {Cue1, Cue2}, ...
-%                     {'Cue1','Cue2'}, fs, [1 5]);
+%                     {'Cue1','Cue2'}, fs, [1 5], true);
 
     precue  = window(1);
     postcue = window(2);
@@ -37,13 +38,22 @@ function plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, fs, win
                 continue;
             end
 
-            trialMatrix(t,:) = smooth_resamp_vels(winFrames);
+            trialData = smooth_resamp_vels(winFrames);
+
+            % --- baseline subtraction ---
+            if doBaseline
+                baselineIdx = timeAxis < 0; % indices before cue
+                baselineVal = mean(trialData(baselineIdx));
+                trialData   = trialData - baselineVal;
+            end
+
+            trialMatrix(t,:) = trialData;
         end
 
         figure;
         imagesc(timeAxis, 1:nTrials, trialMatrix);
-        caxis([-0.3 0.5]);  % <-- impose color limits
-        colormap(jet); 
+        clim([-0.2 0.2]);  
+        colormap(hot); 
         colorbar;
         xlabel('time (s)');
         ylabel('trial');
