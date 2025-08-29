@@ -32,7 +32,7 @@ get_startendFrames = 1; % Change to 1 only if you would like to get start and en
 laser_pulse_dur = 0.01; % 10 ms in duration
 laser_trial_freq = [25,40];
 laser_trial_dur = [2];
-cue_to_laser_time = 1;
+cue_to_laser_time = 2; % for regular conditions (normal/reverse) time is 1 s, for trace is 2 s
 
 % --- Was it a reversal (Cue2 has probes) ---
 reverse = true;
@@ -57,7 +57,6 @@ end
 
 %% --- get walking bout start and end frames ---
 local_encoder_fx;
-close all;
 
 %% --- Get laser on and off times ---
 if exist('laser', 'var')
@@ -124,13 +123,14 @@ end
 parts = strsplit(ch_info_file, filesep); % split into parts
 
 name = parts{4};
-session_part1 = parts{}
-session = parts{}
+session = parts{5};
+tokens = regexp(session, '^(\d+)_', 'tokens'); % extracts session number before underscore
+sessionNum = str2double(tokens{1}{1});
 
 doSave = 0;
 if doSave
-    saveas(figure(1), 'TD154_session7.png')
-    saveas(figure(2), 'TD154_session7_Cue1trials.png')
-    saveas(figure(3), 'TD154_session7_Cue2trials.png')
-    saveas(figure(4), 'TD154_session7_probetrials.png')
+    saveas(figure(1), sprintf('%s_session%d.png', name, sessionNum))
+    saveas(figure(2), sprintf('%s_session%d_Cue1trials.png', name, sessionNum))
+    saveas(figure(3), sprintf('%s_session%d_Cue2trials.png', name, sessionNum))
+    saveas(figure(4), sprintf('%s_session%d_probetrials.png', name, sessionNum))
 end

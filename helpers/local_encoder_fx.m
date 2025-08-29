@@ -1,3 +1,5 @@
+plotOn = false; % boolean to toggle plotting
+
 % --- Direction ---
 
 % Initialize variables
@@ -58,20 +60,22 @@ end
 timeSeconds = (0:length(directionMatrix) - 1) / samplingFrequency;
 
 % Plot the position graph with adjusted x-axis for time in seconds
-figure()
-plot(timeSeconds, position/360*circum, 'k');
-xlabel('Time (seconds)');
-ylabel('Position (mm)');
-title('Position (mm) vs. Time');
-grid on;
 
-hold on; 
-numLines = floor(max(timeSeconds) / 60); % Blue line every 60 seconds
-for k = 1:numLines
-    xline(k * 60, 'b', '--');
+if plotOn
+    figure()
+    plot(timeSeconds, position/360*circum, 'k');
+    xlabel('Time (seconds)');
+    ylabel('Position (mm)');
+    title('Position (mm) vs. Time');
+    grid on;
+    
+    hold on; 
+    numLines = floor(max(timeSeconds) / 60); % Blue line every 60 seconds
+    for k = 1:numLines
+        xline(k * 60, 'b', '--');
+    end
+    hold off;
 end
-hold off;
-
 numRevs = position(end)/360;
 
 % sgolay on position data
@@ -295,70 +299,72 @@ disp(['Avg number of bouts per minute: ', num2str(mean(boutsPerMinute))]); disp(
 
 %% Plot bouts overlayed with mean and SD
 
-% Set window before and after startTimes
-sample_window = round(onset * finalFPS);
-
-% Overlay walking bouts on top of each other if there exists walking bouts
-if length(endFrames) >= 3
-    figure()
-    total_bout_vel = [];
-    total_bout_accl = [];
-    time_vector = [];
-    hold on;
-
-    for i = 2:length(startFrames) % Can set i = 2:... to ignore first bout which can be caught while in the middle of walking
-        onset_index = startFrames(i);
-        start_index = onset_index - sample_window;
-        end_index = onset_index + sample_window;
-
-        if plotting_speed
-            bout_vel = abs(smooth_resamp_vels(start_index:end_index) * circum); % Convert to speed in mm/s
-            bout_accl = [0; diff(bout_vel)];
+if plotOn
+    % Set window before and after startTimes
+    sample_window = round(onset * finalFPS);
+    
+    % Overlay walking bouts on top of each other if there exists walking bouts
+    if length(endFrames) >= 3
+        figure()
+        total_bout_vel = [];
+        total_bout_accl = [];
+        time_vector = [];
+        hold on;
+    
+        for i = 2:length(startFrames) % Can set i = 2:... to ignore first bout which can be caught while in the middle of walking
+            onset_index = startFrames(i);
+            start_index = onset_index - sample_window;
+            end_index = onset_index + sample_window;
+    
+            if plotting_speed
+                bout_vel = abs(smooth_resamp_vels(start_index:end_index) * circum); % Convert to speed in mm/s
+                bout_accl = [0; diff(bout_vel)];
+            else
+                bout_vel = smooth_resamp_vels(start_index:end_index) * circum; % Convert to linear velocity in mm/s
+                bout_accl = [0; diff(bout_vel)];
+            end
+            total_bout_vel = [total_bout_vel; bout_vel'];
+            total_bout_accl = [total_bout_accl; bout_accl'];
+    
+            time_vector = (start_index:end_index) / finalFPS - (onset_index / finalFPS);
+        end 
+        
+        plot(time_vector, total_bout_vel, 'Color', [0.7, 0.7, 0.7]);
+    
+        % Calculate mean and std of total_bout_vel
+        avg_bout_vel = mean(total_bout_vel);
+        avg_bout_accl = mean(total_bout_accl);
+        std_bout_vel = std(total_bout_vel);
+        
+        % Calculate standard error and plot it
+        n = size(total_bout_vel, 1); % Number of walking bouts
+        stderr_bout_vel = std_bout_vel / sqrt(n);
+    
+        fill([time_vector, fliplr(time_vector)], ...
+        [avg_bout_vel + stderr_bout_vel, fliplr(avg_bout_vel - stderr_bout_vel)], ...
+        'k', 'FaceAlpha', 0.3, 'EdgeColor', 'none');
+    
+        % Plot average bout data in mm/s
+        plot(time_vector, avg_bout_vel, 'k');
+        
+        % Additional plot settings
+        xline(0, '--k'); 
+        xlim([time_vector(1) time_vector(end)]);
+        flat_vals = total_bout_vel(:); 
+        ylims = prctile(flat_vals, [1 98]); % removes outliers below lowest 1% and top 98%
+        ylim(ylims);
+        yline(0, 'k');
+        xlabel('Time (seconds)');
+    
+        if plotting_speed % Change ylabel if plotting speed or velocity
+            ylabel('Walking speed (mm/s)');
         else
-            bout_vel = smooth_resamp_vels(start_index:end_index) * circum; % Convert to linear velocity in mm/s
-            bout_accl = [0; diff(bout_vel)];
+            ylabel('Linear velocity (mm/s)');
         end
-        total_bout_vel = [total_bout_vel; bout_vel'];
-        total_bout_accl = [total_bout_accl; bout_accl'];
-
-        time_vector = (start_index:end_index) / finalFPS - (onset_index / finalFPS);
-    end 
-    
-    plot(time_vector, total_bout_vel, 'Color', [0.7, 0.7, 0.7]);
-
-    % Calculate mean and std of total_bout_vel
-    avg_bout_vel = mean(total_bout_vel);
-    avg_bout_accl = mean(total_bout_accl);
-    std_bout_vel = std(total_bout_vel);
-    
-    % Calculate standard error and plot it
-    n = size(total_bout_vel, 1); % Number of walking bouts
-    stderr_bout_vel = std_bout_vel / sqrt(n);
-
-    fill([time_vector, fliplr(time_vector)], ...
-    [avg_bout_vel + stderr_bout_vel, fliplr(avg_bout_vel - stderr_bout_vel)], ...
-    'k', 'FaceAlpha', 0.3, 'EdgeColor', 'none');
-
-    % Plot average bout data in mm/s
-    plot(time_vector, avg_bout_vel, 'k');
-    
-    % Additional plot settings
-    xline(0, '--k'); 
-    xlim([time_vector(1) time_vector(end)]);
-    flat_vals = total_bout_vel(:); 
-    ylims = prctile(flat_vals, [1 98]); % removes outliers below lowest 1% and top 98%
-    ylim(ylims);
-    yline(0, 'k');
-    xlabel('Time (seconds)');
-
-    if plotting_speed % Change ylabel if plotting speed or velocity
-        ylabel('Walking speed (mm/s)');
+        title('Onset of Walking Bouts');
     else
-        ylabel('Linear velocity (mm/s)');
+        disp(' '); disp('No bouts identified so no plot');
     end
-    title('Onset of Walking Bouts');
-else
-    disp(' '); disp('No bouts identified so no plot');
 end
 end
 %% Debugging extractSignals 
