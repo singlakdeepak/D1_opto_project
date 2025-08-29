@@ -1,10 +1,10 @@
-%% Plot Heatmaps of all trials of a specific condition: Normal, Reverse, Reverse + Trace %%
 clear all;
 close all;
 clc;
 
 setOSDetails;
 reverse = false;
+
 %% Initialize storage
 allStimuli = struct();
 i = 1;
@@ -90,8 +90,6 @@ Cue2.onsetID   = Cue2_times * samplingFrequency;
 Cue2.onsetTime = Cue2_times;
 
 %% --- assuming there are only 1 type of laser, I will segregate Cue1 laser or Cue2 laser from probe trials ---
-cue_to_laser_time = 1;
-
 if reverse % If Cue 2 has probe
     [Cue2, Cue2_probe] = unpair_probe_trials(Cue2, laser_trial_times, ...
         cue_to_laser_time);
@@ -114,6 +112,13 @@ postcue = 6;
 doBaseline = 0; % Only really matters if mouse is runnning a lot before cue onset
 
 plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precue, postcue], doBaseline);
+
+%% --- plot the startle response adaptation in first one second after cue ---
+do2 = 0;
+if do2
+plotAngVel_byCueOverT(smooth_resamp_vels, trial_arrays,...
+                trialTypes, finalFPS, cue_to_laser_time,5);
+end
 
 %% --- Save figures: CHANGE NAME ---
 % parts = strsplit(ch_info_file, filesep); % split into parts

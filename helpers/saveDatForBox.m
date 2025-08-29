@@ -35,9 +35,9 @@ cue_to_laser_time = 2; % for regular conditions (normal/reverse) time is 1 s, fo
 lPower  = 6; % laser power
 
 %% Extract the encoder movement and get walking start and stop
-extract_encoder_movement; % Encoder is synchronized to camera, laser is not
+extract_encoder_movement; % Encoder and laser is synchronized to camera
 
-%% save cue time
+%% save cue time and synchronize with camera
 if exist('cue1','var')
     cue1  = cue1(first_pulse_index:last_pulse_index);
     [a1,a2] = get_cue_onset(cue1, samplingFrequency);

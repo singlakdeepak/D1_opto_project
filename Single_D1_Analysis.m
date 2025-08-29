@@ -127,7 +127,7 @@ session = parts{5};
 tokens = regexp(session, '^(\d+)_', 'tokens'); % extracts session number before underscore
 sessionNum = str2double(tokens{1}{1});
 
-doSave = 0;
+doSave = 1;
 if doSave
     saveas(figure(1), sprintf('%s_session%d.png', name, sessionNum))
     saveas(figure(2), sprintf('%s_session%d_Cue1trials.png', name, sessionNum))
