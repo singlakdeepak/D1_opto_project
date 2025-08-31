@@ -4,6 +4,7 @@ close all;
 clc;
 
 setOSDetails;
+reverse = false;
 %% Initialize storage
 allStimuli = struct();
 i = 1;
@@ -90,8 +91,7 @@ Cue2.onsetTime = Cue2_times;
 
 %% --- assuming there are only 1 type of laser, I will segregate Cue1 laser or Cue2 laser from probe trials ---
 
-[new_cue1, new_cue2, cue_probe, CSplus_ID] = ...
-    reclassify_cues(Cue1, Cue2, laser_trial_times);
+[new_cue1, new_cue2, cue_probe, CSplus_ID] = reclassify_cues(Cue1, Cue2, laser_trial_times);
 
 %% --- Plot trial by trial angular velocity heatmaps ---
 if reverse
