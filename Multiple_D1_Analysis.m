@@ -58,26 +58,32 @@ laser_pulse_dur = allStimuli(1).stimuli.lasertimes.laserPulseDur;
 laser_trial_freq = allStimuli(1).stimuli.lasertimes.laserFreq;
 laser_trial_dur = allStimuli(1).stimuli.lasertimes.laserDur;
 
-% Track cumulative time offset (to make times chronological)
-timeOffset = 0;
+%% --- Store session velocities and cue/laser times without cumulative offset ---
+% smooth_resamp_vels will be a cell array (each cell = one session)
+smooth_resamp_vels = cell(1, nSessions);
+
+% Determine max number of cues/lasers across sessions for padding
+maxCue1 = max(cellfun(@(s) numel(s.stimuli.cue1times), num2cell(allStimuli)));
+maxCue2 = max(cellfun(@(s) numel(s.stimuli.cue2times), num2cell(allStimuli)));
+maxLaser = max(cellfun(@(s) numel(s.stimuli.lasertimes.laserontimes), num2cell(allStimuli)));
+
+% Initialize numeric arrays with NaNs for cues and lasers
+Cue1_times = nan(nSessions, maxCue1);
+Cue2_times = nan(nSessions, maxCue2);
+laser_trial_times = nan(nSessions, maxLaser);
 
 for i = 1:nSessions
     stim = allStimuli(i).stimuli;
 
-    % --- concat ball velocity ---
-    smooth_resamp_vels = [smooth_resamp_vels; stim.ball_angular_vel];
+    % --- store session velocities ---
+    smooth_resamp_vels{i} = stim.ball_angular_vel;
 
-    % --- cue times (adjusted for offset) ---
-    Cue1_times = [Cue1_times; stim.cue1times + timeOffset];
-    Cue2_times = [Cue2_times; stim.cue2times + timeOffset];
-
-    % --- laser onset times (adjusted for offset) ---
-    laser_trial_times = [laser_trial_times; stim.lasertimes.laserontimes + timeOffset];
-
-    % update offset (convert to seconds based on sample count / sampling freq)
-    durationSec = numel(stim.ball_angular_vel) / stim.stimsamplingrate;
-    timeOffset = timeOffset + durationSec;
+    % --- pad cue/laser times with NaNs to fit numeric array ---
+    Cue1_times(i,1:numel(stim.cue1times)) = stim.cue1times;
+    Cue2_times(i,1:numel(stim.cue2times)) = stim.cue2times;
+    laser_trial_times(i,1:numel(stim.lasertimes.laserontimes)) = stim.lasertimes.laserontimes;
 end
+
 
 %% Build Cue structures
 Cue1 = struct();
@@ -101,10 +107,10 @@ trialTypes  = {'Cue 1','Cue 2','Probe'};
 trial_arrays = {new_cue1, new_cue2, cue_probe};
 
 precue = 1;
-postcue = 6;
+postcue = 5;
 doBaseline = 0; % Only really matters if mouse is runnning a lot before cue onset
 
-plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precue, postcue], doBaseline);
+plotTrialHeatmaps2(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precue, postcue], doBaseline);
 
 %% --- Save figures: CHANGE NAME ---
 % parts = strsplit(ch_info_file, filesep); % split into parts
