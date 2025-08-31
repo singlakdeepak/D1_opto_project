@@ -127,3 +127,7 @@ plotTrialHeatmaps2(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [prec
 %     saveas(figure(3), sprintf('%s_session%d_Cue2trials.png', name, sessionNum))
 %     saveas(figure(4), sprintf('%s_session%d_probetrials.png', name, sessionNum))
 % end
+
+saveas(figure(1), 'TD156_allcue1.png')
+saveas(figure(2), 'TD156_allcue2.png')
+saveas(figure(3), 'TD156_allprobe.png')

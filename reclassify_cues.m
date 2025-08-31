@@ -3,7 +3,7 @@ function [new_cue1, new_cue2, cue_probe, CSplus_ID] = ...
 % Multi-session reclassification with numeric outputs
 % Minimal NaN padding for probe trials
 
-tol = 0.01; % 10 ms tolerance
+tol = 0.02; % 10 ms tolerance
 nSessions = size(cue1.onsetTime, 1);
 
 % Precompute max trials for cue1/cue2
