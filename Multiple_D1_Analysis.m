@@ -88,19 +88,17 @@ Cue2 = struct();
 Cue2.onsetID   = Cue2_times * samplingFrequency;
 Cue2.onsetTime = Cue2_times;
 
-%% --- assuming there are only 1 type of laser, I will segregate Cue1 laser or Cue2 laser from probe trials ---
+%% --- separates probe trials from cue + laser trials ---
+% automatically detects which cue has laser paired
+% pads values with NaNs to allow easier plotting down the line
 
 [new_cue1, new_cue2, cue_probe, CSplus_ID] = ...
     reclassify_cues(Cue1, Cue2, laser_trial_times);
 
 %% --- Plot trial by trial angular velocity heatmaps ---
-if reverse
-    trialTypes  = {'Cue 1','Cue 2','Cue 2 probe'};
-    trial_arrays = {Cue1, Cue2, Cue2_probe};
-else
-    trialTypes  = {'Cue 1','Cue 2','Cue 1 probe'};
-    trial_arrays = {Cue1, Cue2, Cue1_probe};
-end
+
+trialTypes  = {'Cue 1','Cue 2','Probe'};
+trial_arrays = {new_cue1, new_cue2, cue_probe};
 
 precue = 1;
 postcue = 6;
