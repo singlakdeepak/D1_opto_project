@@ -13,6 +13,7 @@ walk_bout_min_dur = 2.5;     % Minimum walking bout duration in seconds: good va
 downTime = 1.5;              % Duration between walking bouts in seconds: good value is at 1.5
 accl_threshold = 0.21;       % Manipulatable threshold amplitude for acceleration thresholding: good value is at 0.21
 decimal_round = 2;           % decimals to round to for accl_rounding
+final_vel_threshold = 0.05;   % reject final bouts with mean smooth_resamp_vels threshold
 
 % --- Define the specifications of the quadrature encoder ---
 PPR = 256; % Pulses per revolution
@@ -32,7 +33,6 @@ local_encoder_fx;
 close all;
 
 %% --- Get laser on and off times based on the set parameters ---
-laser = laser(first_pulse_index:last_pulse_index); % synchronize laser to camera
 laser_diff = diff([0,laser]);
 
 % Find the indices where the laser turns on (i.e., where the difference is 1)
@@ -46,3 +46,5 @@ laser_trial_times = laser_onset(new_laser_trial_idx)/samplingFrequency;
 %% --- Plot angular velocity aligned to onset of laser ---
 plotAngVel_byLaser(smooth_resamp_vels, laser_trial_times, finalFPS, [onset, onset])
 
+%% --- save plots ---
+saveas(figure(1), 'FD4018_laser.png')

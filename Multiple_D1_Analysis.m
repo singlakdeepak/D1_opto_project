@@ -1,4 +1,4 @@
-%% Plot Heatmaps of all trials of a specific condition: Normal, Reverse, Reverse + Trace %%
+%% D1-cre+ VR + Laser Stimulation Project main script %%
 clear all;
 close all;
 clc;
@@ -100,8 +100,23 @@ Cue2.onsetTime = Cue2_times;
 
 [new_cue1, new_cue2, cue_probe, CSplus_ID] = ...
     reclassify_cues(Cue1, Cue2, laser_trial_times);
+%% --- Plot mean angular velocity of all trial types ---
+trialTypes  = {'Cue 1','Cue 2','Probe'};
+trial_arrays = {new_cue1, new_cue2, cue_probe};
 
-%% --- Plot trial by trial angular velocity heatmaps ---
+precue = 1;
+postcue = 5;
+doBaseline = 0;
+analysisWindow = [0.2 0.8]; % seconds after onset for probeStats
+sessionStats = plotAngVel_finalAll(smooth_resamp_vels, trial_arrays,...
+                trialTypes, finalFPS, [precue,postcue], ...
+                doBaseline, analysisWindow);
+
+%% --- Plot sessionStats ---
+% plot_sessionStats(sessionStats, analysisWindow); % plot mean, max, min of cue 1, cue 2, and cue 3 during analysis window
+plot_sessionMean(sessionStats, analysisWindow) % plot mean of cue 1, cue 2, and cue 3 overlapping during analysis window
+
+%% --- Plot trial by tral angular velocity heatmaps ---
 
 trialTypes  = {'Cue 1','Cue 2','Probe'};
 trial_arrays = {new_cue1, new_cue2, cue_probe};
@@ -110,7 +125,7 @@ precue = 1;
 postcue = 5;
 doBaseline = 0; % Only really matters if mouse is runnning a lot before cue onset
 
-plotTrialHeatmaps2(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precue, postcue], doBaseline);
+plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precue, postcue], doBaseline);
 
 %% --- Save figures: CHANGE NAME ---
 % parts = strsplit(ch_info_file, filesep); % split into parts
@@ -128,6 +143,6 @@ plotTrialHeatmaps2(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [prec
 %     saveas(figure(4), sprintf('%s_session%d_probetrials.png', name, sessionNum))
 % end
 
-saveas(figure(1), 'TD156_allcue1.png')
-saveas(figure(2), 'TD156_allcue2.png')
-saveas(figure(3), 'TD156_allprobe.png')
+% saveas(figure(1), 'TD156_allcue1.png')
+% saveas(figure(2), 'TD156_allcue2.png')
+% saveas(figure(3), 'TD156_allprobe.png')

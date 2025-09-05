@@ -32,10 +32,10 @@ get_startendFrames = 1; % Change to 1 only if you would like to get start and en
 laser_pulse_dur = 0.01; % 10 ms in duration
 laser_trial_freq = [25,40];
 laser_trial_dur = [2];
-cue_to_laser_time = 2; % for regular conditions (normal/reverse) time is 1 s, for trace is 2 s
+cue_to_laser_time = 1; % for regular conditions (normal/reverse) time is 1 s, for trace is 2 s
 
 % --- Was it a reversal (Cue2 has probes) ---
-reverse = true;
+reverse = false;
 %% --- Extract the encoder movement and get walking start and stop ---
 extract_encoder_movement; % Encoder and laser is synchronized to camera, only necessary for pose tracking
 
@@ -127,7 +127,7 @@ session = parts{5};
 tokens = regexp(session, '^(\d+)_', 'tokens'); % extracts session number before underscore
 sessionNum = str2double(tokens{1}{1});
 
-doSave = 0;
+doSave = 1;
 if doSave
     saveas(figure(1), sprintf('%s_session%d.png', name, sessionNum))
     saveas(figure(2), sprintf('%s_session%d_Cue1trials.png', name, sessionNum))
