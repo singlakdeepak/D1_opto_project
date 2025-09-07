@@ -143,6 +143,9 @@ plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precu
 %     saveas(figure(4), sprintf('%s_session%d_probetrials.png', name, sessionNum))
 % end
 
-% saveas(figure(1), 'TD156_allcue1.png')
-% saveas(figure(2), 'TD156_allcue2.png')
-% saveas(figure(3), 'TD156_allprobe.png')
+% saveas(figure(1), 'FD4018_sess.png')
+% saveas(figure(2), 'FD4018_session2.png')
+% saveas(figure(3), 'FD4018_session2_meancueprobe.png')
+% saveas(figure(4), 'FD4018_session2_Cue1trials.png')
+% saveas(figure(5), 'FD4018_session2_Cue2trials.png')
+% saveas(figure(6), 'FD4018_session2_probetrials.png')

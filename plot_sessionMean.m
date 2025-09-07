@@ -23,8 +23,8 @@ function plot_sessionMean(sessionStats, analysisWindow)
     h3  = plot(days, probe_mean,  'g-o', 'LineWidth', 2, 'MarkerFaceColor','g');
 
     xlabel('day');
-    ylabel('angular velocity');
-    title(sprintf('mean angular velocity (%.2f to %.2f s)', analysisWindow(1), analysisWindow(2)));
+    ylabel('mean angular velocity');
+    title(sprintf('(%.2f to %.2f s)', analysisWindow(1), analysisWindow(2)));
     legend([h1, h2, h3], {'Cue 1', 'Cue 2', 'Probe'}, 'Location', 'southwest');
 
     SetFigBoxDefaults;
