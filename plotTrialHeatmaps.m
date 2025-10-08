@@ -1,15 +1,7 @@
-function plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, fs, window, doBaseline)
-% plotTrialHeatmaps2
+function plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, fs, window, doBaseline, ax)
+% plotTrialHeatmaps
 %   Plots trial-by-trial angular velocity aligned to cue onset.
-%   Handles multiple sessions (smooth_resamp_vels is a cell array: 1 cell per session).
-%
-% Inputs:
-%   smooth_resamp_vels : cell array of velocity vectors (1 cell per session)
-%   trial_arrays       : cell array of structs with .onsetTime (s)
-%   trialTypes         : labels for trial types (cell array of strings)
-%   fs                 : sampling rate (Hz)
-%   window             : [precue postcue] in seconds
-%   doBaseline         : logical, true = subtract baseline (pre-cue mean)
+%   Optional axes handle for subplot-friendly plotting.
 
 precue  = window(1);
 postcue = window(2);
@@ -27,10 +19,10 @@ for tt = 1:numel(trial_arrays)
 
     % --- Concatenate trials across sessions in order ---
     onsetTimes = [];
-    trialSessionIdx = [];  % Keep track of which session each trial came from
+    trialSessionIdx = [];  
     for s = 1:nSessions
         thisSession = trials.onsetTime(s,:);
-        thisSession = thisSession(~isnan(thisSession)); % drop padding
+        thisSession = thisSession(~isnan(thisSession));
         onsetTimes  = [onsetTimes, thisSession];
         trialSessionIdx = [trialSessionIdx, repmat(s, 1, numel(thisSession))];
     end
@@ -39,10 +31,10 @@ for tt = 1:numel(trial_arrays)
     nTime   = numel(timeAxis);
     trialMatrix = nan(nTrials, nTime);
 
-    % --- Extract aligned trial data for each session separately ---
+    % --- Extract aligned trial data ---
     for t = 1:nTrials
-        sIdx = trialSessionIdx(t);         % session index for this trial
-        velVec = smooth_resamp_vels{sIdx}; % velocity for this session
+        sIdx = trialSessionIdx(t);
+        velVec = smooth_resamp_vels{sIdx};
 
         onsetFrame = round(onsetTimes(t) * fs);
         winFrames  = round((-precue*fs : postcue*fs)) + onsetFrame;
@@ -53,33 +45,48 @@ for tt = 1:numel(trial_arrays)
 
         trialData = velVec(winFrames);
 
-        % --- baseline subtraction ---
         if doBaseline
-            baselineIdx = timeAxis < 0; % indices before cue
+            baselineIdx = timeAxis < 0;
             baselineVal = mean(trialData(baselineIdx));
             trialData   = trialData - baselineVal;
         end
 
         trialMatrix(t,:) = trialData;
     end
-    % --- After trialMatrix is built and imagesc is called ---
-    figure;
-    imagesc(timeAxis, 1:nTrials, trialMatrix);
-    clim([-0.2 0.2]);  
-    colormap(hot); 
-    colorbar;
-    xlabel('time (s)');
-    ylabel('trial');
-    title(sprintf('angular velocity: %s', trialTypes{tt}));
-    xline(0,'w--','LineWidth',1.5);
-    
+
+    % --- handle axes creation ---
+    if nargin < 7 || isempty(ax)
+        figure;
+        ax_tt = gca;
+    else
+        if numel(ax) >= tt
+            ax_tt = ax(tt); 
+            axes(ax_tt); %#ok<LAXES>
+            cla(ax_tt);
+        else
+            error('Not enough axes handles provided for number of trial types.');
+        end
+    end
+
+    % --- plotting ---
+    imagesc(ax_tt, timeAxis, 1:nTrials, trialMatrix);
+    clim(ax_tt, [-0.2 0.2]);  
+    colormap(ax_tt, hot); 
+    colorbar(ax_tt, 'fontweight', 'bold');
+    xlabel(ax_tt, 'time (s)', 'fontweight', 'bold');
+    ylabel(ax_tt, 'trial', 'fontweight', 'bold');
+    ax_tt.XAxis.FontWeight = 'bold';
+    ax_tt.YAxis.FontWeight = 'bold';
+    title(ax_tt, sprintf('angular velocity: %s', trialTypes{tt}));
+    xline(ax_tt, 0,'w--','LineWidth',1.5);
+
     % --- Add session separators ---
     sessionTrialCounts = cellfun(@(r) sum(~isnan(r)), num2cell(trials.onsetTime, 2)); 
     cumulativeTrials = cumsum(sessionTrialCounts);
     for k = 1:length(cumulativeTrials)-1
-        yline(cumulativeTrials(k)+0.5, 'w--', 'LineWidth', 1);
+        yline(ax_tt, cumulativeTrials(k)+0.5, 'w--', 'LineWidth', 1);
     end
-    
-    SetFigBoxDefaults
+
+    % SetFigBoxDefaults
 end
 end

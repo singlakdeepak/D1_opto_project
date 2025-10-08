@@ -31,7 +31,7 @@ get_startendFrames = 1; % Change to 1 only if you would like to get start and en
 laser_pulse_dur = 0.01; % 10 ms in duration
 laser_trial_freq = [25,40];
 laser_trial_dur = [2]; % Make sure to change this if laser duration changes
-cue_to_laser_time = 2; % for regular conditions (normal/reverse) time is 1 s, for trace is 2 s
+cue_to_laser_time = 1; % for regular conditions (normal/reverse) time is 1 s, for trace is 2 s
 lPower  = 6; % laser power
 
 %% Extract the encoder movement and get walking start and stop

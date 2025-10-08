@@ -107,8 +107,9 @@ trial_arrays = {new_cue1, new_cue2, cue_probe};
 precue = 1;
 postcue = 5;
 doBaseline = 0;
-analysisWindow = [0.2 0.8]; % seconds after onset for probeStats
-sessionStats = plotAngVel_finalAll(smooth_resamp_vels, trial_arrays,...
+doAbs = 0;
+analysisWindow = [0 1]; % seconds after onset for mean stats
+[sessionStats, meanTraces_all, t] = plotAngVel_finalAll(doAbs, smooth_resamp_vels, trial_arrays,...
                 trialTypes, finalFPS, [precue,postcue], ...
                 doBaseline, analysisWindow);
 
@@ -116,6 +117,35 @@ sessionStats = plotAngVel_finalAll(smooth_resamp_vels, trial_arrays,...
 % plot_sessionStats(sessionStats, analysisWindow); % plot mean, max, min of cue 1, cue 2, and cue 3 during analysis window
 plot_sessionMean(sessionStats, analysisWindow) % plot mean of cue 1, cue 2, and cue 3 overlapping during analysis window
 
+%% --- Plot latency ---
+doLatency = 0;
+
+if doLatency
+    threshstd = 1;
+    threshold = 0.02;
+    
+    [lat_CSplus_first, lat_CSplus_peak, lat_probe_first, lat_probe_peak] = ...
+        computeLatency(meanTraces_all, CSplus_ID, t, threshstd, threshold);
+    days = 1:nSessions;
+    
+    figure();
+    subplot(2,1,1);
+    h1 = plot(days, lat_CSplus_peak, 'b-o', 'LineWidth', 2, 'MarkerFaceColor','b'); hold on;
+    h2 = plot(days, lat_probe_peak, 'g-o', 'LineWidth', 2, 'MarkerFaceColor','g'); hold off;
+    h3 = yline(1, 'k--');
+    ylabel('latency (s)')
+    title('latency of activity from cue onset');
+    legend([h1, h2, h3], {'CSplus', 'Probe', 'laser'}, 'Location', 'northeast');
+    % ylim([0.25 1.5])
+    
+    subplot(2,1,2);
+    plot(days, lat_CSplus_first, 'b-o', 'LineWidth', 2, 'MarkerFaceColor','b'); hold on;
+    plot(days, lat_probe_first, 'g-o', 'LineWidth', 2, 'MarkerFaceColor','g'); hold off;
+    yline(1, 'k--');
+    xlabel('day');
+    ylabel('latency (s)');
+    % ylim([0.25 1.5])
+end
 %% --- Plot trial by tral angular velocity heatmaps ---
 
 trialTypes  = {'Cue 1','Cue 2','Probe'};
@@ -143,9 +173,10 @@ plotTrialHeatmaps(smooth_resamp_vels, trial_arrays, trialTypes, finalFPS, [precu
 %     saveas(figure(4), sprintf('%s_session%d_probetrials.png', name, sessionNum))
 % end
 
-% saveas(figure(1), 'FD4018_sess.png')
-% saveas(figure(2), 'FD4018_session2.png')
-% saveas(figure(3), 'FD4018_session2_meancueprobe.png')
-% saveas(figure(4), 'FD4018_session2_Cue1trials.png')
-% saveas(figure(5), 'FD4018_session2_Cue2trials.png')
-% saveas(figure(6), 'FD4018_session2_probetrials.png')
+% saveas(figure(5), 'TD171_session5.png')
+% saveas(figure(6), 'TD171_session5_meancue.png')
+% saveas(figure(7), 'TD171_session5_Cue1trials.png')
+% saveas(figure(8), 'TD171_session5_Cue2trials.png')
+% saveas(figure(9), 'TD171_session5_probetrials.png')
+
+
